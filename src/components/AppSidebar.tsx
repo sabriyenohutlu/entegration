@@ -1,21 +1,8 @@
-import {
-  Home,
-  Inbox,
-  Calendar,
-  Search,
-  Settings,
-  User2,
-  ChevronUp,
-  Plus,
-  Projector,
-  ChevronDown,
-} from "lucide-react";
+import { Home, Inbox, Calendar, Search, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -24,49 +11,67 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarSeparator,
 } from "./ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
-
-const items = [
+const sidebarItems = [
   {
-    title: "Home",
+    id: 1,
+    title: "Anasayfa",
     url: "/",
     icon: Home,
+    nested: false,
   },
   {
-    title: "Inbox",
-    url: "#",
+    id: 2,
+    title: "Pazaryerleri",
+    url: "/pazaryerleri",
     icon: Inbox,
+    nested: true,
+    nest: [{ title: "Trendyol", url: "/trendyol-tum-urunler" }],
   },
   {
-    title: "Calendar",
-    url: "#",
+    id: 3,
+    title: "Siparişler",
+    url: "/siparisler",
     icon: Calendar,
+    nested: true,
+    nest: [{ title: "Tüm Siparişler", url: "/tum-siparisler" }],
   },
   {
-    title: "Search",
-    url: "#",
+    id: 4,
+    title: "CRM",
+    url: "/crm",
     icon: Search,
+    nested: false,
   },
   {
-    title: "Settings",
-    url: "#",
+    id: 5,
+    title: "Ayarlar",
+    url: "/ayarlar",
     icon: Settings,
+    nested: false,
+  },
+  {
+    id: 6,
+    title: "Markalar",
+    url: "/markalar",
+    icon: Settings,
+    nested: false,
+  },
+  {
+    id: 7,
+    title: "Kategoriler",
+    url: "/kategoriler",
+    icon: Settings,
+    nested: false,
   },
 ];
 
@@ -91,134 +96,51 @@ const AppSidebar = () => {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {item.title === "Inbox" && (
-                    <SidebarMenuBadge>24</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Projects</SidebarGroupLabel>
-          <SidebarGroupAction>
-            <Plus /> <span className="sr-only">Add Project</span>
-          </SidebarGroupAction>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/#">
-                    <Projector />
-                    See All Projects
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/#">
-                    <Plus />
-                    Add Project
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {/* COLLAPSABLE */}
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Collapsable Group
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
+              {sidebarItems.map((item, idx) =>
+                item.nested === true && item.nest ? (
+                  <Collapsible
+                    key={idx}
+                    defaultOpen
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton>
+                          <Link href={`${item.url}`}>{item.title}</Link>
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {Array.isArray(item.nest) &&
+                            item.nest.map((subItem, index) => (
+                              <SidebarMenuSubItem key={index}>
+                                <Link href={`${item.url}${subItem.url}`}>
+                                  {subItem.title}
+                                </Link>
+                              </SidebarMenuSubItem>
+                            ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link href="/#">
-                        <Projector />
-                        See All Projects
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
+                    {item.title === "Inbox" && (
+                      <SidebarMenuBadge>24</SidebarMenuBadge>
+                    )}
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/#">
-                        <Plus />
-                        Add Project
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        {/* NESTED */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Nested Items</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/#">
-                    <Projector />
-                    See All Projects
-                  </Link>
-                </SidebarMenuButton>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/#">
-                        <Plus />
-                        Add Project
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/#">
-                        <Plus />
-                        Add Category
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </SidebarMenuItem>
+                )
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> John Doe <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Account</DropdownMenuItem>
-                <DropdownMenuItem>Setting</DropdownMenuItem>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 };
